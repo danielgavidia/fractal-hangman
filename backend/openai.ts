@@ -21,7 +21,6 @@ const openaiChatCompletions = async (difficulty: string) => {
 			},
 		],
 	});
-	console.log(res);
 	return res.choices[0].message.content;
 };
 

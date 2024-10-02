@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const isValidWord = (input: string): boolean => {
 	const alphaOnlyRegex = /^[A-Za-z]+$/;
 	return alphaOnlyRegex.test(input);
 };
+
+type difficulty = "easy" | "medium" | "hard";
 
 interface GameSetup {
 	gameMode: string;
@@ -25,6 +28,25 @@ const GameSetup: React.FC<GameSetup> = ({ gameMode }) => {
 			e.preventDefault();
 			setError(true);
 		}
+	};
+
+	const handleVersusComputer = async (difficulty: difficulty) => {
+		const res = await axios({
+			method: "POST",
+			url: "http://localhost:3000/word",
+			data: {
+				difficulty: difficulty,
+			},
+		});
+		const word = res.data.resOpenai;
+		const validWordBoolean = isValidWord(res.data.resOpenai);
+		if (validWordBoolean) {
+			setWord("");
+			navigate("/game", { state: { word: word } });
+		} else {
+			setError(true);
+		}
+		navigate("/game", { state: { word: word } });
 	};
 
 	if (gameMode === "1v1") {
@@ -61,13 +83,19 @@ const GameSetup: React.FC<GameSetup> = ({ gameMode }) => {
 				<div className="w-full flex justify-center my-4">1 v Machine</div>
 				<div className="flex w-full justify-around">
 					<div className="w-1/4 border-2 border-200-gray rounded-lg">
-						<button className="w-full">Easy</button>
+						<button className="w-full" onClick={() => handleVersusComputer("easy")}>
+							Easy
+						</button>
 					</div>
 					<div className="w-1/4 border-2 border-200-gray rounded-lg">
-						<button className="w-full">Medium</button>
+						<button className="w-full" onClick={() => handleVersusComputer("medium")}>
+							Medium
+						</button>
 					</div>
 					<div className="w-1/4 border-2 border-200-gray rounded-lg">
-						<button className="w-full">Hard</button>
+						<button className="w-full" onClick={() => handleVersusComputer("hard")}>
+							Hard
+						</button>
 					</div>
 				</div>
 			</div>

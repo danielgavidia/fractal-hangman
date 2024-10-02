@@ -17,8 +17,8 @@ app.listen(port, () => {
 });
 
 // routes
-app.post("/word", (req, res) => {
+app.post("/word", async (req, res) => {
 	const { difficulty } = req.body;
-	const resOpenai = openaiChatCompletions(difficulty);
+	const resOpenai = await openaiChatCompletions(difficulty);
 	res.status(200).json({ resOpenai: resOpenai });
 });
