@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { alphabet } from "../utils/alphabet";
-
+import { hangmanStages } from "../utils/hangman";
 import Letter from "./Letter";
 import Keyboard from "./Keyboard";
-import { hangmanStages } from "../utils/hangman";
 
 // convert word to array of {letter: string, shown: boolean}
 const getLetterArray = (word: string) => {
@@ -31,8 +30,12 @@ const getHangmanArray = (hangmanStages: string[]) => {
 	return arr;
 };
 
-const Game = () => {
-	const word = "kaleidoscope";
+// Game
+interface Game {
+	word: string;
+}
+
+const Game: React.FC<Game> = ({ word }) => {
 	const maxWrong = 6;
 	const [lettersArr, setLettersArr] = useState(getLetterArray(word));
 	const [keyboardLetters, setKeyboardLetters] = useState(getKeyboardLetterArray(alphabet));
