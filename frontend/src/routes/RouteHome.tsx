@@ -1,5 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 const RouteHome = () => {
-	return <div>RouteHome</div>;
+	const navigate = useNavigate();
+	return (
+		<div>
+			<button onClick={() => navigate("/game")}>Go to game</button>
+		</div>
+	);
 };
 
 export default RouteHome;

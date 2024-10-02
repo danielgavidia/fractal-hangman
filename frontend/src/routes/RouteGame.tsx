@@ -1,5 +1,11 @@
+import Game from "../components/Game";
+
 const RouteGame = () => {
-	return <div>RouteGame</div>;
+	return (
+		<div>
+			<Game />
+		</div>
+	);
 };
 
 export default RouteGame;
