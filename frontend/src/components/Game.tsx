@@ -3,6 +3,7 @@ import { alphabet } from "../utils/alphabet";
 import { hangmanStages } from "../utils/hangman";
 import Letter from "./Letter";
 import Keyboard from "./Keyboard";
+import GameOverModal from "./GameOverModal";
 
 // convert word to array of {letter: string, shown: boolean}
 const getLetterArray = (word: string) => {
@@ -40,8 +41,8 @@ const Game: React.FC<Game> = ({ word }) => {
 	const [lettersArr, setLettersArr] = useState(getLetterArray(word));
 	const [keyboardLetters, setKeyboardLetters] = useState(getKeyboardLetterArray(alphabet));
 	const [wrongMoveCount, setWrongMoveCount] = useState<number>(0);
-	const [lost, setLost] = useState<boolean>(false);
 	const [won, setWon] = useState<boolean>(false);
+	const [gameLive, setGameLive] = useState<boolean>(true);
 	const hangmanArray = getHangmanArray(hangmanStages);
 
 	// logic for showing letters
@@ -84,39 +85,44 @@ const Game: React.FC<Game> = ({ word }) => {
 		const wrongMoves = keyboardLetters.filter((x) => !x.correct);
 		setWrongMoveCount(wrongMoves.length);
 		if (wrongMoves.length === maxWrong) {
-			setLost(true);
+			setWon(false);
+			setGameLive(false);
 		}
 
 		// winning functionality
 		const correctLetters = lettersArr.filter((x) => x.shown === true);
 		if (correctLetters.length === lettersArr.length) {
 			setWon(true);
+			setGameLive(false);
 		}
 	}, [keyboardLetters]);
 
 	return (
 		<div>
-			<br />
-			<div>Won game: {won.toString()}</div>
-			<div>Lost game: {lost.toString()}</div>
-			<div>Max # of wrong moves allowed: {maxWrong}</div>
-			<div>Current # of wrong moves: {wrongMoveCount}</div>
-			<div>
-				<div>The Hangman</div>
-				<pre className="font-mono">
-					{hangmanArray.find((x) => x.stage === wrongMoveCount)?.figure}
-				</pre>
-			</div>
-			<div className="flex justify-between">
-				{lettersArr.map((x, index) => {
-					return <Letter key={index} letter={x.letter} shown={x.shown} />;
-				})}
-			</div>
-			<br />
-			<Keyboard
-				keyboardLetters={keyboardLetters}
-				handleKeyboardLetter={handleKeyboardLetter}
-			/>
+			{gameLive ? (
+				<div>
+					<div>Won game: {won.toString()}</div>
+					<div>Max # of wrong moves allowed: {maxWrong}</div>
+					<div>Current # of wrong moves: {wrongMoveCount}</div>
+					<div>
+						<div>The Hangman</div>
+						<pre className="font-mono">
+							{hangmanArray.find((x) => x.stage === wrongMoveCount)?.figure}
+						</pre>
+					</div>
+					<div className="flex justify-between">
+						{lettersArr.map((x, index) => {
+							return <Letter key={index} letter={x.letter} shown={x.shown} />;
+						})}
+					</div>
+					<Keyboard
+						keyboardLetters={keyboardLetters}
+						handleKeyboardLetter={handleKeyboardLetter}
+					/>
+				</div>
+			) : (
+				<GameOverModal won={won} word={word} />
+			)}
 		</div>
 	);
 };
