@@ -98,19 +98,15 @@ const Game: React.FC<Game> = ({ word }) => {
 	}, [keyboardLetters]);
 
 	return (
-		<div>
+		<div className="w-1/2">
 			{gameLive ? (
 				<div>
-					<div>Won game: {won.toString()}</div>
-					<div>Max # of wrong moves allowed: {maxWrong}</div>
-					<div>Current # of wrong moves: {wrongMoveCount}</div>
-					<div>
-						<div>The Hangman</div>
+					<div className="flex justify-center">
 						<pre className="font-mono">
 							{hangmanArray.find((x) => x.stage === wrongMoveCount)?.figure}
 						</pre>
 					</div>
-					<div className="flex justify-between">
+					<div className="flex justify-between my-4">
 						{lettersArr.map((x, index) => {
 							return <Letter key={index} letter={x.letter} shown={x.shown} />;
 						})}

@@ -56,7 +56,7 @@ const GameSetup: React.FC<GameSetup> = ({ gameMode }) => {
 				<form onSubmit={handleSubmit} className="flex justify-between">
 					<div className="flex-1 border-2 border-gray-200 rounded-lg mr-4 flex items-center">
 						<input
-							type="text"
+							type="password"
 							placeholder="Input word"
 							className="p-2 rounded-lg w-full outline-none"
 							onChange={(e) => setWord(e.target.value)}

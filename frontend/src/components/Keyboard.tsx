@@ -16,7 +16,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
 	handleKeyboardLetter: showLetter,
 }) => {
 	return (
-		<div className="flex grid grid-cols-10">
+		<div className="grid grid-cols-6">
 			{keyboardLetters.map((x, index) => {
 				return (
 					<KeyboardButton

@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 const Root = () => {
 	return (
 		<div>
-			<div className="navbar flex bg-neutral text-secondary">
+			<div className="navbar flex bg-neutral text-secondary-content p-6">
 				<div className="flex-1">
 					<Link to="/home">Fractal Hangman</Link>
 				</div>
