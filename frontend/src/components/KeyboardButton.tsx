@@ -13,9 +13,16 @@ const KeyboardButton: React.FC<KeyboardButtonProps> = ({
 	keyboardLetter,
 	handleKeyboardLetter: showLetter,
 }) => {
-	const stylingCorrect = keyboardLetter.correct ? "" : "bg-yellow-200";
+	const stylingCorrect = () => {
+		if (keyboardLetter.correct && !keyboardLetter.enabled) {
+			return "bg-green-300";
+		} else if (!keyboardLetter.correct && !keyboardLetter.enabled) {
+			return "bg-yellow-300";
+		}
+	};
+	const styling = stylingCorrect();
 	return (
-		<div className="border-2 rounded-lg">
+		<div className={"border-2 border-gray-200 m-1 rounded-lg " + styling}>
 			{keyboardLetter.enabled ? (
 				<button
 					onClick={() => showLetter(keyboardLetter.keyboardLetter)}
@@ -24,9 +31,7 @@ const KeyboardButton: React.FC<KeyboardButtonProps> = ({
 					{keyboardLetter.keyboardLetter}
 				</button>
 			) : (
-				<button className={"w-full h-full bg-gray-200 " + stylingCorrect}>
-					{keyboardLetter.keyboardLetter}
-				</button>
+				<button className={"w-full h-full"}>{keyboardLetter.keyboardLetter}</button>
 			)}
 		</div>
 	);

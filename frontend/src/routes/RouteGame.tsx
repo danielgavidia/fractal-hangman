@@ -6,7 +6,7 @@ const RouteGame = () => {
 	const { word } = location.state || {};
 
 	return (
-		<div className="p-4">
+		<div className="p-4 flex justify-center">
 			<Game word={word} />
 		</div>
 	);
