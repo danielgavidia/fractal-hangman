@@ -2,12 +2,12 @@ import type { KeyboardLetterObj } from "../../../backend/engine/engineTypes";
 
 interface KeyboardButtonProps {
     keyboardLetterObj: KeyboardLetterObj;
-    // handleKeyboardLetter: (letter: string) => void;
+    move: (letter: string) => void;
 }
 
 const KeyboardButton: React.FC<KeyboardButtonProps> = ({
     keyboardLetterObj,
-    // handleKeyboardLetter: showLetter,
+    move,
 }) => {
     const { letter, correct, enabled } = keyboardLetterObj
 
@@ -23,7 +23,7 @@ const KeyboardButton: React.FC<KeyboardButtonProps> = ({
         <div className={"border-2 border-gray-200 m-1 rounded-lg " + styling}>
             {enabled ? (
                 <button
-                    // onClick={() => showLetter(letter)}
+                    onClick={() => move(letter)}
                     className="w-full h-full"
                 >
                     {letter}

@@ -13,7 +13,7 @@ export const getInitialGameState = (): Game => {
 
 	const initialGameState: Game = {
 		gameMode: "1v1",
-		gameLive: false,
+		gameLive: true,
 		gameWon: false,
 		wrongCount: 0,
 		wrongMax: 6,

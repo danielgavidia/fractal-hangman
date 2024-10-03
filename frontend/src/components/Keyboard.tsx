@@ -3,12 +3,12 @@ import type { Keyboard } from "../../../backend/engine/engineTypes";
 
 interface KeyboardProps {
     keyboard: Keyboard;
-    //     handleKeyboardLetter: (letter: string) => void;
+    move: (letter: string) => void;
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({
     keyboard,
-    // handleKeyboardLetter: showLetter,
+    move,
 }) => {
     return (
         <div className="grid grid-cols-6">
@@ -17,7 +17,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
                     <KeyboardButton
                         key={index}
                         keyboardLetterObj={x}
-                    // handleKeyboardLetter={showLetter}
+                        move={move}
                     />
                 );
             })}

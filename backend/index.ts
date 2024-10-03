@@ -36,21 +36,21 @@ const io = new Server(3001, {
 	},
 });
 
-const initialGameState = getInitialGameState();
+let game = getInitialGameState();
 
 io.on("connection", (socket) => {
 	console.log("User connected");
-	socket.emit("game", initialGameState);
-	// socket.on("chat messages", (msgs) => {
-	// 	// Update data
-	// 	data.messages = msgs;
+	socket.emit("game", game);
+	socket.on("move", (newGame) => {
+		// Update data
+		let game = newGame;
 
-	// 	// Broadcast to everyone except the sender
-	// 	socket.broadcast.emit("messages", data.messages);
+		// Broadcast to everyone except the sender
+		socket.broadcast.emit("game", game);
 
-	// 	// Emit to all clients including the sender
-	// 	io.emit("messages", data.messages);
-	// });
+		// Emit to all clients including the sender
+		io.emit("game", game);
+	});
 
 	socket.on("disconnect", () => {
 		console.log("user disconnected");
