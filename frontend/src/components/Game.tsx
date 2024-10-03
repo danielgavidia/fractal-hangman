@@ -1,6 +1,5 @@
 // libraries
 import React, { useState, useEffect } from 'react';
-import { io, Socket } from 'socket.io-client';
 
 // components
 import Keyboard from './Keyboard';
@@ -13,10 +12,10 @@ import type { Game } from "../../../backend/engine/engineTypes"
 // utils
 import { getInitialGameState } from "../../../backend/engine/getInitialGameState"
 import GameOverModal from './GameOverModal';
-const socket: Socket = io('http://localhost:3001');
+import { socket } from '../utils/socket';
 
 // app
-const SocketTestFinal: React.FC = () => {
+const Game: React.FC = () => {
     const [game, setGame] = useState<Game>(getInitialGameState())
     console.log(game)
 
@@ -101,12 +100,9 @@ const SocketTestFinal: React.FC = () => {
     }
 
     return (
-        <div className='w-full'>
+        <div className='w-3/4 bg-neutral-content'>
             {game.gameLive ? (
                 <div>
-                    <div>gameMode: {game.gameMode}</div>
-                    <div>gameLive: {game.gameLive.toString()}</div>
-                    <div>gameWon: {game.gameWon.toString()}</div>
                     <Hangman game={game} />
                     <AnswerWord answerWord={game.answerWord} />
                     <Keyboard keyboard={game.keyboard} move={move} />
@@ -119,4 +115,4 @@ const SocketTestFinal: React.FC = () => {
     );
 };
 
-export default SocketTestFinal;
+export default Game;

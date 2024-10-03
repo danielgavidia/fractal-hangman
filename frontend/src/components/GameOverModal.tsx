@@ -19,7 +19,7 @@ const GameOverModal: React.FC<GameOverModal> = ({ game }) => {
                         <div className="p-2">
                             <button
                                 onClick={() => navigate("/home")}
-                                className="btn bg-primary text-secondary-content"
+                                className="btn bg-primary text-neutral"
                             >
                                 New Game
                             </button>
@@ -32,7 +32,7 @@ const GameOverModal: React.FC<GameOverModal> = ({ game }) => {
                         <div className="p-2">
                             <button
                                 onClick={() => navigate("/home")}
-                                className="btn bg-primary text-secondary-content"
+                                className="btn bg-primary text-neutral"
                             >
                                 New Game
                             </button>

@@ -13,18 +13,18 @@ const KeyboardButton: React.FC<KeyboardButtonProps> = ({
 
     const stylingCorrect = () => {
         if (correct && !enabled) {
-            return "bg-green-300";
+            return "bg-error border-error text-neutral-content";
         } else if (!correct && !enabled) {
-            return "bg-yellow-300";
+            return "bg-base-200 border-base-200 text-base-300";
         }
     };
     const styling = stylingCorrect();
     return (
-        <div className={"border-2 border-gray-200 m-1 rounded-lg " + styling}>
+        <div className={"border-2 border-neutral m-1 rounded-lg " + styling}>
             {enabled ? (
                 <button
                     onClick={() => move(letter)}
-                    className="w-full h-full"
+                    className="w-full h-full hover:bg-base-300 rounded-md"
                 >
                     {letter}
                 </button>
