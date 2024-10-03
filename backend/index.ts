@@ -24,12 +24,19 @@ app.post("/word", async (req, res) => {
 	const resOpenai = await openaiChatCompletions(difficulty);
 	res.status(200).json({ resOpenai: resOpenai });
 });
-// #endregion
 
-// --------------------------------
 // socket
 import { Server } from "socket.io";
 import { getInitialGameState } from "./engine/getInitialGameState";
+import type { Game } from "./engine/engineTypes";
+
+type GameServer = {
+	[id: string]: Game;
+};
+
+const gameServer: GameServer = {
+	game1: getInitialGameState("game1"),
+};
 
 export const io = new Server(3001, {
 	cors: {
@@ -37,54 +44,44 @@ export const io = new Server(3001, {
 	},
 });
 
-let game = getInitialGameState();
-
 io.on("connection", (socket) => {
 	console.log("User connected");
-	socket.emit("game", game);
-	socket.on("move", (newGame) => {
+
+	socket.on("lobby", () => {
+		socket.emit("games", Object.keys(gameServer));
+	});
+
+	socket.on("joingame", (gameId: string) => {
+		socket.join(gameId); // they're joining the room for this gameId
+		io.sockets.in(gameId).emit("game", gameServer[gameId]);
+	});
+
+	socket.on("creategame", (gameId: string) => {
+		// todo just give all the games unique ids and then give them game names as well, and handle rendering of this on the client
+		gameServer[gameId] = getInitialGameState(gameId);
+		io.emit("games", Object.keys(gameServer));
+	});
+
+	socket.on("move", (uniqueId: string, letter: string) => {
+		// todo
 		// Update data
-		let game = newGame;
-
-		// Broadcast to everyone except the sender
-		socket.broadcast.emit("game", game);
-
-		// Emit to all clients including the sender
-		io.emit("game", game);
+		// games = games.map((x) => {
+		// 	if (x.uniqueId === newGame.uniqueId) {
+		// 		return newGame;
+		// 	} else {
+		// 		return x;
+		// 	}
+		// });
+		// // Broadcast to everyone except the sender
+		// socket.broadcast.emit("games", games);
+		// // Emit to all clients including the sender
+		// io.emit("games", games);
+		// this isn't good enough, because I need to update ALL the players in that lobby.
+		socket.broadcast;
+		io.emit("game", gameServer[uniqueId]);
 	});
 
 	socket.on("disconnect", () => {
 		console.log("user disconnected");
 	});
 });
-
-// // socket test
-// import { Server } from "socket.io";
-// const io = new Server(3001, {
-// 	cors: {
-// 		origin: "*",
-// 	},
-// });
-
-// const data = {
-// 	messages: ["Seed message 1", "Seed message 2"],
-// };
-
-// io.on("connection", (socket) => {
-// 	console.log("User connected");
-// 	socket.emit("initial data", data.messages);
-// 	socket.on("chat messages", (msgs) => {
-// 		// Update data
-// 		data.messages = msgs;
-
-// 		// Broadcast to everyone except the sender
-// 		socket.broadcast.emit("messages", data.messages);
-
-// 		// Emit to all clients including the sender
-// 		io.emit("messages", data.messages);
-// 	});
-
-// 	socket.on("disconnect", () => {
-// 		console.log("user disconnected");
-// 	});
-// });

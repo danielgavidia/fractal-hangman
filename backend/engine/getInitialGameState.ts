@@ -1,3 +1,6 @@
+// libraries
+import { v4 as uuidv4 } from "uuid";
+
 // utils
 import { hangmanStages } from "../utils/hangman";
 import { alphabet } from "../utils/alphabet";
@@ -6,12 +9,14 @@ import { alphabet } from "../utils/alphabet";
 import type { Game, AnswerWord, Keyboard, Hangman, Letter } from "./engineTypes";
 
 // get initial game state
-export const getInitialGameState = (): Game => {
+export const getInitialGameState = (id: string): Game => {
 	const answerWord = getAnswerWord("word");
 	const keyboard = getKeyboard(alphabet);
 	const hangman = getHangman(hangmanStages);
+	const uniqueId = uuidv4();
 
 	const initialGameState: Game = {
+		uniqueId: id,
 		gameMode: "1v1",
 		gameLive: true,
 		gameWon: false,
