@@ -26,14 +26,14 @@ export const getInitialGameState = (): Game => {
 };
 
 // convert word to array of {letter: string, shown: boolean}
-const getAnswerWord = (word: string): AnswerWord => {
+export const getAnswerWord = (word: string): AnswerWord => {
 	const arr = word.split("");
 	const arrObj = arr.map((x) => ({ letter: x, shown: false }));
 	return arrObj;
 };
 
 // convert alphabet array to array of {keyboardLetter: string, enabled: boolean, correct: boolean}
-const getKeyboard = (alphabet: Letter[]): Keyboard => {
+export const getKeyboard = (alphabet: Letter[]): Keyboard => {
 	const arr = alphabet.map((x) => ({
 		letter: x,
 		enabled: true,
@@ -43,10 +43,16 @@ const getKeyboard = (alphabet: Letter[]): Keyboard => {
 };
 
 // convert hangman array to array of {stage: number, figure: string}
-const getHangman = (hangmanStages: string[]): Hangman => {
+export const getHangman = (hangmanStages: string[]): Hangman => {
 	const arr = hangmanStages.map((x, index) => ({
 		index: index,
 		figurine: x,
 	}));
 	return arr;
+};
+
+// check if word is valid
+export const isValidWord = (input: string): boolean => {
+	const alphaOnlyRegex = /^[A-Za-z]+$/;
+	return alphaOnlyRegex.test(input);
 };

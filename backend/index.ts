@@ -3,7 +3,7 @@ import openaiChatCompletions from "./openai";
 
 // setup
 // #region
-const app = express();
+export const app = express();
 const port = 3000;
 const cors = require("cors");
 
@@ -13,6 +13,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
 	res.send("Hello World!");
 });
+
 app.listen(port, () => {
 	console.log(`Server running at http://localhost:${port}`);
 });
@@ -30,7 +31,7 @@ app.post("/word", async (req, res) => {
 import { Server } from "socket.io";
 import { getInitialGameState } from "./engine/getInitialGameState";
 
-const io = new Server(3001, {
+export const io = new Server(3001, {
 	cors: {
 		origin: "*",
 	},
