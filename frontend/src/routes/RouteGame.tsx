@@ -1,5 +1,5 @@
-// import Game from "../components/Game";
-import { useLocation } from "react-router-dom";
+import Game from "../components/Game";
+// import { useLocation } from "react-router-dom";
 
 const RouteGame = () => {
     // const location = useLocation();
@@ -7,7 +7,7 @@ const RouteGame = () => {
 
     return (
         <div className="p-4 flex justify-center">
-            {/* <Game word={word} /> */}
+            <Game />
         </div>
     );
 };
