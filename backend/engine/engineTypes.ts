@@ -1,5 +1,5 @@
 // game engine
-export interface Engine {
+export interface Game {
 	gameMode: GameMode;
 	gameLive: boolean;
 	gameWon: boolean;
@@ -27,7 +27,7 @@ export interface HangmanObj {
 export type AnswerWord = AnswerLetterObj[];
 
 export interface AnswerLetterObj {
-	letter: Letter;
+	letter: string;
 	shown: boolean;
 }
 

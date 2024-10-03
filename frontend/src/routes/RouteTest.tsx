@@ -1,8 +1,9 @@
-import SocketTest from "../components/SocketTest"
+// import SocketTest from "../components/SocketTest"
+import SocketTestFinal from "../components/SocketTestFinal"
 
 const RouteTest = () => {
     return (
-        <div><SocketTest /></div>
+        <div><SocketTestFinal /></div>
     )
 }
 

@@ -1,18 +1,18 @@
-import type { Engine, GameMode, AnswerLetterObj, Letter } from "./engineTypes";
+import type { Game, GameMode, AnswerLetterObj, Letter } from "./engineTypes";
 
 // game function
-const game = (engine: Engine) => {
+const game = (engine: Game) => {
 	return;
 };
 
 // step 0: choose game mode
-const chooseGameMode = (engine: Engine, gameMode: GameMode): Engine => {
+const chooseGameMode = (engine: Game, gameMode: GameMode): Game => {
 	const newEngine = { ...engine, gameMode: gameMode };
 	return newEngine;
 };
 
 // step 1: choose word
-const chooseAnswerWord = (engine: Engine, word: string): Engine => {
+const chooseAnswerWord = (engine: Game, word: string): Game => {
 	const letters = word.split("");
 	const answerWord: AnswerLetterObj[] = letters.map((x) => ({
 		letter: x as Letter,
@@ -23,7 +23,7 @@ const chooseAnswerWord = (engine: Engine, word: string): Engine => {
 };
 
 // step 2: choose letter
-const chooseKeyboardLetter = (engine: Engine, letter: Letter): Engine => {
+const chooseKeyboardLetter = (engine: Game, letter: Letter): Game => {
 	const answerWord = engine.answerWord;
 	const answerWordLetters = answerWord.map((x) => x.letter);
 	const keyboard = engine.keyboard;
