@@ -72,7 +72,7 @@ const GameSetup: React.FC<GameSetupProps> = ({ game }) => {
                 </form>
                 <div className="w-full flex text-center p-2">
                     {error ? (
-                        <p className="text-red-500 w-full">
+                        <p className="text-error w-full">
                             Invalid word. Must be a single word, only ABC characters! Try again!
                         </p>
                     ) : (
