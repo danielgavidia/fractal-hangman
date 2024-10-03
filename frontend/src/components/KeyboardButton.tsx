@@ -1,40 +1,38 @@
-type keyboardLetter = {
-	keyboardLetter: string;
-	enabled: boolean;
-	correct: boolean;
-};
+import type { KeyboardLetterObj } from "../../../backend/engine/engineTypes";
 
 interface KeyboardButtonProps {
-	keyboardLetter: keyboardLetter;
-	handleKeyboardLetter: (letter: string) => void;
+    keyboardLetterObj: KeyboardLetterObj;
+    // handleKeyboardLetter: (letter: string) => void;
 }
 
 const KeyboardButton: React.FC<KeyboardButtonProps> = ({
-	keyboardLetter,
-	handleKeyboardLetter: showLetter,
+    keyboardLetterObj,
+    // handleKeyboardLetter: showLetter,
 }) => {
-	const stylingCorrect = () => {
-		if (keyboardLetter.correct && !keyboardLetter.enabled) {
-			return "bg-green-300";
-		} else if (!keyboardLetter.correct && !keyboardLetter.enabled) {
-			return "bg-yellow-300";
-		}
-	};
-	const styling = stylingCorrect();
-	return (
-		<div className={"border-2 border-gray-200 m-1 rounded-lg " + styling}>
-			{keyboardLetter.enabled ? (
-				<button
-					onClick={() => showLetter(keyboardLetter.keyboardLetter)}
-					className="w-full h-full"
-				>
-					{keyboardLetter.keyboardLetter}
-				</button>
-			) : (
-				<button className={"w-full h-full"}>{keyboardLetter.keyboardLetter}</button>
-			)}
-		</div>
-	);
+    const { letter, correct, enabled } = keyboardLetterObj
+
+    const stylingCorrect = () => {
+        if (correct && !enabled) {
+            return "bg-green-300";
+        } else if (!correct && !enabled) {
+            return "bg-yellow-300";
+        }
+    };
+    const styling = stylingCorrect();
+    return (
+        <div className={"border-2 border-gray-200 m-1 rounded-lg " + styling}>
+            {enabled ? (
+                <button
+                    // onClick={() => showLetter(letter)}
+                    className="w-full h-full"
+                >
+                    {letter}
+                </button>
+            ) : (
+                <button className={"w-full h-full"}>{letter}</button>
+            )}
+        </div>
+    );
 };
 
 export default KeyboardButton;

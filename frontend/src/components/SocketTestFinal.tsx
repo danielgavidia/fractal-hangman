@@ -1,15 +1,22 @@
+// libraries
 import React, { useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const socket: Socket = io('http://localhost:3001'); // Change URL if needed
+// components
+import Keyboard from './Keyboard';
+import AnswerWord from './AnswerWord';
+import Hangman from './Hangman';
 
-import type { Game } from "../../../backend/engineTypes.ts"
+// types
+import type { Game } from "../../../backend/engine/engineTypes"
 
+// utils
+import { getInitialGameState } from "../../../backend/engine/getInitialGameState"
+const socket: Socket = io('http://localhost:3001');
+
+// app
 const SocketTestFinal: React.FC = () => {
-    // const [message, setMessage] = useState<string>('');
-    // const [messages, setMessages] = useState<string[]>([]);
-
-    const [game, setGame] = useState<Game>()
+    const [game, setGame] = useState<Game>(getInitialGameState())
     console.log(game)
 
     useEffect(() => {
@@ -27,37 +34,17 @@ const SocketTestFinal: React.FC = () => {
         // clean up
         return () => {
             socket.off("game")
-            // socket.off("messages")
         }
     }, [])
 
-    // const sendMessage = (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     // Emit 'chat message' event to the server
-    //     const messagesNew = [...messages, message]
-    //     socket.emit('chat messages', messagesNew);
-    //     setMessage(''); // Clear the input field
-    // };
-
     return (
         <div>
-            <div>gameMode: {game?.gameMode}</div>
-            <div>gameLive: {game?.gameLive.toString()}</div>
-            <div>gameWon: {game?.gameWon.toString()}</div>
-            {/* <form onSubmit={sendMessage}>
-                <input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Enter message"
-                />
-                <button type="submit">Send</button>
-            </form>
-
-            <ul>
-                {messages.map((msg, index) => (
-                    <li key={index}>{msg}</li>
-                ))}
-            </ul> */}
+            <div>gameMode: {game.gameMode}</div>
+            <div>gameLive: {game.gameLive.toString()}</div>
+            <div>gameWon: {game.gameWon.toString()}</div>
+            <Hangman game={game} />
+            <AnswerWord answerWord={game.answerWord} />
+            <Keyboard keyboard={game.keyboard} />
         </div>
     );
 };
