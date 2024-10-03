@@ -1,4 +1,6 @@
-export const alphabet: string[] = [
+import type { Letter } from "../engine/engineTypes";
+
+export const alphabet: Letter[] = [
 	"a",
 	"b",
 	"c",

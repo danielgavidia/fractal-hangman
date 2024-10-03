@@ -1,126 +1,122 @@
-import { useState, useEffect } from "react";
-import { alphabet } from "../utils/alphabet";
-import { hangmanStages } from "../utils/hangman";
-import Letter from "./Letter";
-import Keyboard from "./Keyboard";
-import GameOverModal from "./GameOverModal";
+// libraries
+import React, { useState, useEffect } from 'react';
+import { io, Socket } from 'socket.io-client';
 
-// convert word to array of {letter: string, shown: boolean}
-const getLetterArray = (word: string) => {
-	const arr = word.split("");
-	const arrObj = arr.map((x) => ({ letter: x, shown: false }));
-	return arrObj;
+// components
+import Keyboard from './Keyboard';
+import AnswerWord from './AnswerWord';
+import Hangman from './Hangman';
+
+// types
+import type { Game } from "../../../backend/engine/engineTypes"
+
+// utils
+import { getInitialGameState } from "../../../backend/engine/getInitialGameState"
+import GameOverModal from './GameOverModal';
+const socket: Socket = io('http://localhost:3001');
+
+// app
+const SocketTestFinal: React.FC = () => {
+    const [game, setGame] = useState<Game>(getInitialGameState())
+    console.log(game)
+
+    // load data via websockets
+    useEffect(() => {
+        // load initial game state
+        socket.on("game", (game: Game) => {
+            console.log(game)
+            setGame(game)
+        })
+
+        // clean up
+        return () => {
+            socket.off("game")
+        }
+    }, [])
+
+    // move
+    const move = (letter: string): void => {
+        // modify answerWord
+        const answerWord = game.answerWord
+        const newAnswerWord = answerWord.map(x => {
+            if (x.letter === letter) {
+                return { ...x, shown: true }
+            } else {
+                return x
+            }
+        })
+
+        // modify keyboard
+        const keyboard = game.keyboard
+        const answerWordLetters = answerWord.map(x => x.letter)
+        const newKeyboard = keyboard.map((x) => {
+            if (answerWordLetters.includes(x.letter) && letter === x.letter) {
+                return { ...x, enabled: false, correct: true }
+            } else if (
+                !answerWordLetters.includes(x.letter) && letter === x.letter
+            ) {
+                return { ...x, enabled: false, correct: false }
+            } else {
+                return x
+            }
+        })
+
+        // modify wrongCount
+        const newWrongCount = newKeyboard.filter(x => !x.correct).length
+
+        // modify gameWon
+
+        // modify gameStatus (gameLive + gameWon)
+        const correctLettersCount = newAnswerWord.filter(x => x.shown === true).length
+        const newGameLive = () => {
+            if (newWrongCount === game.wrongMax) {
+                return {
+                    gameLive: false,
+                    gameWon: false
+                }
+            } else if (correctLettersCount === newAnswerWord.length) {
+                return {
+                    gameLive: false,
+                    gameWon: true
+                }
+            } else {
+                return {
+                    gameLive: true,
+                    gameWon: true,
+                }
+            }
+        }
+
+        // modify game
+        const newGame = {
+            ...game,
+            answerWord: newAnswerWord,
+            keyboard: newKeyboard,
+            wrongCount: newWrongCount,
+            gameLive: newGameLive().gameLive,
+            gameWon: newGameLive().gameWon
+        }
+        socket.emit("move", newGame)
+        return
+    }
+
+    return (
+        <div className='w-full'>
+            {game.gameLive ? (
+                <div>
+                    <div>gameMode: {game.gameMode}</div>
+                    <div>gameLive: {game.gameLive.toString()}</div>
+                    <div>gameWon: {game.gameWon.toString()}</div>
+                    <Hangman game={game} />
+                    <AnswerWord answerWord={game.answerWord} />
+                    <Keyboard keyboard={game.keyboard} move={move} />
+                </div>
+            ) : (
+                <div><GameOverModal game={game} /></div>
+            )}
+
+        </div>
+    );
 };
 
-// convert alphabet array to array of {keyboardLetter: string, enabled: boolean, correct: boolean}
-const getKeyboardLetterArray = (alphabet: string[]) => {
-	const arr = alphabet.map((x) => ({
-		keyboardLetter: x,
-		enabled: true,
-		correct: true,
-	}));
-	return arr;
-};
-
-// convert hangman array to array of {stage: number, figure: string}
-const getHangmanArray = (hangmanStages: string[]) => {
-	const arr = hangmanStages.map((x, index) => ({
-		stage: index,
-		figure: x,
-	}));
-	return arr;
-};
-
-// Game
-interface Game {
-	word: string;
-}
-
-const Game: React.FC<Game> = ({ word }) => {
-	const maxWrong = 6;
-	const [lettersArr, setLettersArr] = useState(getLetterArray(word));
-	const [keyboardLetters, setKeyboardLetters] = useState(getKeyboardLetterArray(alphabet));
-	const [wrongMoveCount, setWrongMoveCount] = useState<number>(0);
-	const [won, setWon] = useState<boolean>(false);
-	const [gameLive, setGameLive] = useState<boolean>(true);
-	const hangmanArray = getHangmanArray(hangmanStages);
-
-	// logic for showing letters
-	const handleKeyboardLetter = (letter: string): void => {
-		// show answer letters
-		const newLetters = lettersArr.map((x) => {
-			if (x.letter === letter) {
-				return { ...x, shown: true };
-			} else {
-				return x;
-			}
-		});
-		setLettersArr(newLetters);
-
-		// mutate keyboardLetters for disabled
-		const newKeyboardLetters = keyboardLetters.map((x) => {
-			// check if keyboardLetter exists in lettersArr (answer letters)
-			if (
-				lettersArr.map((x) => x.letter).includes(x.keyboardLetter) &&
-				letter === x.keyboardLetter
-			) {
-				// if it exists, change enabled to false and correct to true
-				return { ...x, enabled: false, correct: true };
-			} else if (
-				!lettersArr.map((x) => x.letter).includes(x.keyboardLetter) &&
-				letter === x.keyboardLetter
-			) {
-				// if it does not exist, change enabled to false and correct to false
-				return { ...x, enabled: false, correct: false };
-			} else {
-				return x;
-			}
-		});
-		setKeyboardLetters(newKeyboardLetters);
-	};
-
-	// useEffect for updating moveCount and win-lose
-	useEffect(() => {
-		// losing functionality
-		const wrongMoves = keyboardLetters.filter((x) => !x.correct);
-		setWrongMoveCount(wrongMoves.length);
-		if (wrongMoves.length === maxWrong) {
-			setWon(false);
-			setGameLive(false);
-		}
-
-		// winning functionality
-		const correctLetters = lettersArr.filter((x) => x.shown === true);
-		if (correctLetters.length === lettersArr.length) {
-			setWon(true);
-			setGameLive(false);
-		}
-	}, [keyboardLetters]);
-
-	return (
-		<div className="w-1/2">
-			{gameLive ? (
-				<div>
-					<div className="flex justify-center">
-						<pre className="font-mono">
-							{hangmanArray.find((x) => x.stage === wrongMoveCount)?.figure}
-						</pre>
-					</div>
-					<div className="flex justify-between my-4">
-						{lettersArr.map((x, index) => {
-							return <Letter key={index} letter={x.letter} shown={x.shown} />;
-						})}
-					</div>
-					<Keyboard
-						keyboardLetters={keyboardLetters}
-						handleKeyboardLetter={handleKeyboardLetter}
-					/>
-				</div>
-			) : (
-				<GameOverModal won={won} word={word} />
-			)}
-		</div>
-	);
-};
-
-export default Game;
+export default SocketTestFinal;
