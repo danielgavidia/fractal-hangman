@@ -1,5 +1,11 @@
-// game engine
+// game server
+export type GameServer = {
+	[id: string]: Game;
+};
+
+// game
 export interface Game {
+	dateCreated: Date;
 	gameId: string;
 	gameName: string;
 	gameMode: GameMode;
@@ -12,6 +18,19 @@ export interface Game {
 	keyboard: Keyboard;
 	hangman: Hangman;
 }
+
+// lobby game
+export type LobbyGame = {
+	gameId: string;
+	gameName: string;
+	gameWon: boolean;
+	gameLive: boolean;
+	dateCreated: Date;
+	difficulty: Difficulty;
+	answerWordLength: number;
+	guessedCorrectly: number;
+	wrongCount: number;
+};
 
 // game mode
 export type GameMode = "1v1" | "1vC" | "";

@@ -1,5 +1,4 @@
 // libraries
-import { v4 as uuidv4 } from "uuid";
 
 // utils
 import { hangmanStages } from "./hangman";
@@ -7,30 +6,64 @@ import { alphabet } from "./alphabet";
 import { words } from "./words";
 
 // types
-import type { Game, AnswerWord, Keyboard, Hangman, Letter, Difficulty } from "./engineTypes";
+import type {
+	Game,
+	Keyboard,
+	Hangman,
+	Letter,
+	Difficulty,
+	LobbyGame,
+	GameServer,
+} from "./engineTypes";
 
 // get initial game state
-export const getInitialGameState = (id: string, gameName: string, difficulty: Difficulty): Game => {
+export const getInitialGameState = (
+	gameId: string,
+	dateCreated: Date,
+	gameName: string,
+	difficulty: Difficulty
+): Game => {
 	const answerWord = getAnswerWord(difficulty);
 	const keyboard = getKeyboard(alphabet);
 	const hangman = getHangman(hangmanStages);
-	const uniqueId = uuidv4();
 
 	const initialGameState: Game = {
-		gameId: id,
+		gameId: gameId,
+		dateCreated: dateCreated,
 		gameName: gameName,
 		gameMode: "1v1",
 		gameLive: true,
 		gameWon: false,
 		wrongCount: 0,
 		wrongMax: 6,
-		difficulty: "easy",
+		difficulty: difficulty,
 		answerWord: answerWord,
 		keyboard: keyboard,
 		hangman: hangman,
 	};
 	return initialGameState;
 };
+
+// get lobbyGame
+export function getLobbyGames(gameServer: GameServer): LobbyGame[] {
+	const games = Object.values(gameServer).map((x) => {
+		const answerWordLength = x.answerWord.length;
+		const guessedCorrectly = x.keyboard.filter((x) => x.correct === true && !x.enabled).length;
+		const game = {
+			gameId: x.gameId,
+			gameName: x.gameName,
+			gameWon: x.gameWon,
+			gameLive: x.gameLive,
+			dateCreated: x.dateCreated,
+			difficulty: x.difficulty,
+			answerWordLength: answerWordLength,
+			guessedCorrectly: guessedCorrectly,
+			wrongCount: x.wrongCount,
+		};
+		return game;
+	});
+	return games;
+}
 
 // get initial AnswerWord
 function getRandomWord(wordsArray: string[]): string {
