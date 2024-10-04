@@ -20,8 +20,8 @@ app.listen(port, () => {
 
 // socket
 import { Server } from "socket.io";
-import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
-import type { GameServer, Difficulty, Game, LobbyGame } from "./engine/engineTypes";
+import { getInitialGameState, getLobbyGames, move } from "../engine/engine";
+import type { GameServer, Difficulty, Game, LobbyGame } from "../engine/engineTypes";
 
 const gameServer: GameServer = {};
 
