@@ -1,8 +1,91 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// model GameServer {
+//     // defaults
+//     id        String   @id @default(uuid())
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+
+//     // fields
+//     serverId String @default(uuid())
+
+//     // model relations
+//     games Game[]
+// }
+
+model Game {
+    // defaults
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // fields
+    dateCreated DateTime @default(now())
+    gameId      String   @default(uuid())
+    gameName    String   @default("")
+    gameLive    Boolean  @default(true)
+    gameWon     Boolean  @default(false)
+    wrongCount  Int      @default(0)
+    wrongMax    Int      @default(0)
+    difficulty  String   @default("easy")
+
+    // relationships
+    answerWord AnswerLetterObj[]
+    keyboard   KeyboardLetterObj[]
+    hangman    HangmanObj[]
+    // GameServer   GameServer?         @relation(fields: [gameServerId], references: [id])
+    // gameServerId String?
+}
+
+model AnswerLetterObj {
+    // defaults
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // fields
+    letter String  @default("a")
+    shown  Boolean @default(false)
+
+    // relationships
+    Game   Game?   @relation(fields: [gameId], references: [id])
+    gameId String?
+}
+
+model KeyboardLetterObj {
+    // defaults
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // fields
+    letter  String  @default("a")
+    enabled Boolean @default(true)
+    correct Boolean @default(true)
+
+    // relationships
+    Game   Game?   @relation(fields: [gameId], references: [id])
+    gameId String?
+}
+
+model HangmanObj {
+    // defaults
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // fields
+    index    Int    @default(0)
+    figurine String @default("")
+
+    // relationships
+    Game   Game?   @relation(fields: [gameId], references: [id])
+    gameId String?
 }

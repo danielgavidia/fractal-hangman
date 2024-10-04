@@ -19,9 +19,11 @@ app.listen(port, () => {
 // #endregion
 
 // socket
+// setup
 import { Server } from "socket.io";
 import { getInitialGameState, getLobbyGames, move } from "../engine/engine";
 import type { GameServer, Difficulty, Game, LobbyGame } from "../engine/engineTypes";
+import prisma from "../prisma/prisma";
 
 const gameServer: GameServer = {};
 
@@ -31,8 +33,18 @@ export const io = new Server(3001, {
 	},
 });
 
-io.on("connection", (socket) => {
+// logic
+io.on("connection", async (socket) => {
 	console.log("User connected");
+
+	const gameServerPrisma = await prisma.game.findMany({
+		include: {
+			answerWord: true,
+			keyboard: true,
+			hangman: true,
+		},
+	});
+	console.log(gameServerPrisma);
 
 	socket.on("lobby", () => {
 		const lobbyGames = getLobbyGames(gameServer);

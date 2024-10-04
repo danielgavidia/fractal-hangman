@@ -1,4 +1,5 @@
 // game server
+// export type GameServer = Game[];
 export type GameServer = {
 	[id: string]: Game;
 };
