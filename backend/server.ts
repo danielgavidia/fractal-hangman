@@ -20,12 +20,8 @@ app.listen(port, () => {
 
 // socket
 import { Server } from "socket.io";
-import { getInitialGameState, move } from "./engine/engine";
-import type { Difficulty, Game } from "./engine/engineTypes";
-
-type GameServer = {
-	[id: string]: Game;
-};
+import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
+import type { GameServer, Difficulty, Game, LobbyGame } from "./engine/engineTypes";
 
 const gameServer: GameServer = {};
 
@@ -39,11 +35,9 @@ io.on("connection", (socket) => {
 	console.log("User connected");
 
 	socket.on("lobby", () => {
-		const games = Object.values(gameServer).map((x) => ({
-			gameId: x.gameId,
-			gameName: x.gameName,
-		}));
-		socket.emit("games", games);
+		const lobbyGames = getLobbyGames(gameServer);
+		console.log(lobbyGames);
+		socket.emit("games", lobbyGames);
 	});
 
 	socket.on("joingame", (gameId: string) => {
@@ -51,14 +45,14 @@ io.on("connection", (socket) => {
 		io.sockets.in(gameId).emit("game", gameServer[gameId]);
 	});
 
-	socket.on("creategame", (gameId: string, gameName: string, difficulty: Difficulty) => {
-		gameServer[gameId] = getInitialGameState(gameId, gameName, difficulty);
-		const games = Object.values(gameServer).map((x) => ({
-			gameId: x.gameId,
-			gameName: x.gameName,
-		}));
-		io.emit("games", games);
-	});
+	socket.on(
+		"creategame",
+		(gameId: string, dateCreated: Date, gameName: string, difficulty: Difficulty) => {
+			gameServer[gameId] = getInitialGameState(gameId, dateCreated, gameName, difficulty);
+			const lobbyGames = getLobbyGames(gameServer);
+			io.emit("games", lobbyGames);
+		}
+	);
 
 	socket.on("move", (gameId: string, letter: string) => {
 		const game = gameServer[gameId];

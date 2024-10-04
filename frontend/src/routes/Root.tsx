@@ -11,7 +11,7 @@ const Root = () => {
 					<Link to="/home">New Game</Link>
 				</div>
 			</div>
-			<div className="pt-20 h-full w-3/4">
+			<div className="pt-20 h-full w-5/6 max-w-screen-sm">
 				<Outlet />
 			</div>
 		</div>

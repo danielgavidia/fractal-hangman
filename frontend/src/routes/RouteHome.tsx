@@ -1,33 +1,31 @@
 // libraries
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../utils/socket";
 
 // types
-import { socket } from "../utils/socket";
-import { Difficulty } from "../../../backend/engine/engineTypes";
+import type { Difficulty } from "../../../backend/engine/engineTypes";
+import type { LobbyGame } from "../../../backend/engine/engineTypes";
 
-type displayGame = {
-	gameId: string;
-	gameName: string;
-};
+// components
+import LobbyGameComponent from "../components/LobbyGameComponent";
 
 const RouteHome = () => {
-	const [games, setGames] = useState<displayGame[]>([]);
+	const [games, setGames] = useState<LobbyGame[]>([]);
 	const [gameName, setGameName] = useState<string>("");
 	const [error, setError] = useState<boolean>(false);
 	const [difficulty, setDifficulty] = useState<Difficulty>("easy");
 	const modes: Difficulty[] = ["easy", "medium", "hard"];
 	const navigate = useNavigate();
 
-	console.log(games);
+	console.log("difficulty", difficulty);
 
 	// load data via websockets
 	useEffect(() => {
 		socket.emit("lobby");
 		// load initial game state
-		socket.on("games", (games: displayGame[]) => {
+		socket.on("games", (games: LobbyGame[]) => {
 			console.log(games);
 			setGames(games);
 		});
@@ -45,7 +43,8 @@ const RouteHome = () => {
 			setError(true);
 		} else {
 			const gameId = uuidv4();
-			socket.emit("creategame", gameId, gameName, difficulty);
+			const dateCreated = new Date();
+			socket.emit("creategame", gameId, dateCreated, gameName, difficulty);
 			setError(false);
 			setGameName("");
 			navigate(`/game/${gameId}`);
@@ -97,18 +96,8 @@ const RouteHome = () => {
 					<p className="w-full text-center p-4 font-bold text-lg">Current Games</p>
 				</div>
 				<div className="overflow-y-auto scrollbar-hide flex-grow border-[0.5px] border-neutral mb-4">
-					{games.map((game, index) => {
-						return (
-							<div
-								key={index}
-								className="flex justify-between items-center border-b-2 border-base-200 h-20 mx-4"
-							>
-								<p className="text-sm">{game.gameName}</p>
-								<Link className="btn btn-outline" to={`/game/${game.gameId}`}>
-									go
-								</Link>
-							</div>
-						);
+					{games.map((x, index) => {
+						return <LobbyGameComponent key={index} lobbyGame={x} />;
 					})}
 				</div>
 			</div>
