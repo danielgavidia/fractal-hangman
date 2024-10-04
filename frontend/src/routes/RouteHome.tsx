@@ -72,7 +72,8 @@ const RouteHome = () => {
 									<button
 										key={index}
 										className={
-											"border-[0.5px] border-neutral p-2 w-full " + styling
+											"border-[0.5px] border-neutral p-2 w-full hover:bg-primary " +
+											styling
 										}
 										onClick={() => setDifficulty(x)}
 									>
@@ -83,7 +84,7 @@ const RouteHome = () => {
 						</div>
 						<button
 							onClick={() => createGame(gameName, difficulty)}
-							className="border-[0.5px] border-black"
+							className="border-[0.5px] border-black hover:bg-primary"
 						>
 							Play
 						</button>
