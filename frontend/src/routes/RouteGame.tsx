@@ -9,7 +9,7 @@ const RouteGame = () => {
         return <div>Error: No game ID provided</div>;
     }
     return (
-        <div className="p-4 flex justify-center h-screen">
+        <div className="p-4 flex justify-center h-full">
             <Game id={id} />
         </div>
     );
