@@ -10,10 +10,8 @@ import Hangman from './Hangman';
 import type { Game } from "../../../backend/engine/engineTypes"
 
 // utils
-// import { getInitialGameState } from "../../../backend/engine/getInitialGameState"
 import GameOverModal from './GameOverModal';
 import { socket } from '../utils/socket';
-import { getInitialGameState } from '../../../backend/engine/getInitialGameState';
 
 // app
 interface GameProps {
@@ -25,12 +23,9 @@ const Game: React.FC<GameProps> = ({ id }) => {
 
     // load data via websockets
     useEffect(() => {
-        // load initial game state]
-        socket.emit('joingame', id) // the server needs to know i joined this game.
-
-        console.log("Game Component games")
+        // load initial game state
+        socket.emit('joingame', id) // the server needs to know I joined this game.
         socket.on("game", (game: Game) => {
-            console.log(game)
             setGame(game)
         })
 
@@ -41,73 +36,8 @@ const Game: React.FC<GameProps> = ({ id }) => {
         }
     }, [id])
 
-    // move
-    const move = (letter: string): void => {
-        // if !game return
-        if (!game) return
-
-        // modify answerWord
-        const answerWord = game.answerWord
-        const newAnswerWord = answerWord.map(x => {
-            if (x.letter === letter) {
-                return { ...x, shown: true }
-            } else {
-                return x
-            }
-        })
-
-        // modify keyboard
-        const keyboard = game.keyboard
-        const answerWordLetters = answerWord.map(x => x.letter)
-        const newKeyboard = keyboard.map((x) => {
-            if (answerWordLetters.includes(x.letter) && letter === x.letter) {
-                return { ...x, enabled: false, correct: true }
-            } else if (
-                !answerWordLetters.includes(x.letter) && letter === x.letter
-            ) {
-                return { ...x, enabled: false, correct: false }
-            } else {
-                return x
-            }
-        })
-
-        // modify wrongCount
-        const newWrongCount = newKeyboard.filter(x => !x.correct).length
-
-        // modify gameWon
-
-        // modify gameStatus (gameLive + gameWon)
-        const correctLettersCount = newAnswerWord.filter(x => x.shown === true).length
-        const newGameLive = () => {
-            if (newWrongCount === game.wrongMax) {
-                return {
-                    gameLive: false,
-                    gameWon: false
-                }
-            } else if (correctLettersCount === newAnswerWord.length) {
-                return {
-                    gameLive: false,
-                    gameWon: true
-                }
-            } else {
-                return {
-                    gameLive: true,
-                    gameWon: true,
-                }
-            }
-        }
-
-        // modify game
-        const newGame = {
-            ...game,
-            answerWord: newAnswerWord,
-            keyboard: newKeyboard,
-            wrongCount: newWrongCount,
-            gameLive: newGameLive().gameLive,
-            gameWon: newGameLive().gameWon
-        }
-        socket.emit("move", newGame)
-        return
+    function move(gameId: string, letter: string) {
+        socket.emit("move", gameId, letter);
     }
 
     return (
@@ -117,7 +47,7 @@ const Game: React.FC<GameProps> = ({ id }) => {
                     <div>
                         <Hangman game={game} />
                         <AnswerWord answerWord={game.answerWord} />
-                        <Keyboard keyboard={game.keyboard} move={move} />
+                        <Keyboard keyboard={game.keyboard} move={move} gameId={id} />
                     </div>
                 ) : (
                     <div><GameOverModal game={game} /></div>
