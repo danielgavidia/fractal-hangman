@@ -36,11 +36,11 @@ io.on("connection", (socket) => {
 
 	socket.on("lobby", () => {
 		const lobbyGames = getLobbyGames(gameServer);
-		console.log(lobbyGames);
 		socket.emit("games", lobbyGames);
 	});
 
 	socket.on("joingame", (gameId: string) => {
+		console.log(`joingame, gameId: ${gameId}`);
 		socket.join(gameId);
 		io.sockets.in(gameId).emit("game", gameServer[gameId]);
 	});

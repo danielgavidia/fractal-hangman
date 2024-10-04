@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { LobbyGame } from "../../../backend/engine/engineTypes";
 
 // Game Won
@@ -89,6 +89,7 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 	};
 
 	const [copied, setCopied] = useState<boolean>(false);
+	const navigate = useNavigate();
 	const copyToClipboard = (link: string) => {
 		navigator.clipboard.writeText(link).then(() => {
 			setCopied(true);
@@ -113,10 +114,11 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 					</div>
 					<GameProgress wrongCount={wrongCount} />
 					<div className="w-20 h-full p-1 text-xs">
-						<button className="border-[0.5px] border-neutral h-full w-full hover:bg-primary">
-							<Link to={`/game/${gameId}`} className="w-full">
-								go
-							</Link>
+						<button
+							onClick={() => navigate(`/game/${gameId}`)}
+							className="border-[0.5px] border-neutral h-full w-full hover:bg-primary"
+						>
+							go
 						</button>
 					</div>
 					<div className="w-20 h-full p-1 text-xs">
