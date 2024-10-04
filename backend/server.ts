@@ -39,18 +39,25 @@ io.on("connection", (socket) => {
 	console.log("User connected");
 
 	socket.on("lobby", () => {
-		socket.emit("games", Object.keys(gameServer));
+		const games = Object.values(gameServer).map((x) => ({
+			gameId: x.gameId,
+			gameName: x.gameName,
+		}));
+		socket.emit("games", games);
 	});
 
 	socket.on("joingame", (gameId: string) => {
-		socket.join(gameId); // they're joining the room for this gameId
+		socket.join(gameId);
 		io.sockets.in(gameId).emit("game", gameServer[gameId]);
 	});
 
-	socket.on("creategame", (gameId: string, difficulty: Difficulty) => {
-		// todo just give all the games unique ids and then give them game names as well, and handle rendering of this on the client
-		gameServer[gameId] = getInitialGameState(gameId, difficulty);
-		io.emit("games", Object.keys(gameServer));
+	socket.on("creategame", (gameId: string, gameName: string, difficulty: Difficulty) => {
+		gameServer[gameId] = getInitialGameState(gameId, gameName, difficulty);
+		const games = Object.values(gameServer).map((x) => ({
+			gameId: x.gameId,
+			gameName: x.gameName,
+		}));
+		io.emit("games", games);
 	});
 
 	socket.on("move", (gameId: string, letter: string) => {

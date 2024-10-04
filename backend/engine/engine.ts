@@ -10,14 +10,15 @@ import { words } from "./words";
 import type { Game, AnswerWord, Keyboard, Hangman, Letter, Difficulty } from "./engineTypes";
 
 // get initial game state
-export const getInitialGameState = (id: string, difficulty: Difficulty): Game => {
+export const getInitialGameState = (id: string, gameName: string, difficulty: Difficulty): Game => {
 	const answerWord = getAnswerWord(difficulty);
 	const keyboard = getKeyboard(alphabet);
 	const hangman = getHangman(hangmanStages);
 	const uniqueId = uuidv4();
 
 	const initialGameState: Game = {
-		uniqueId: id,
+		gameId: id,
+		gameName: gameName,
 		gameMode: "1v1",
 		gameLive: true,
 		gameWon: false,
