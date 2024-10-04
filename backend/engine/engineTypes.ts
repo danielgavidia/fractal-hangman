@@ -9,7 +9,7 @@ export interface Game {
 	dateCreated: Date;
 	gameId: string;
 	gameName: string;
-	gameMode: GameMode;
+	// gameMode: GameMode;
 	gameLive: boolean;
 	gameWon: boolean;
 	wrongCount: number;

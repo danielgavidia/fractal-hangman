@@ -32,8 +32,8 @@ const RouteHome = () => {
 
 		// clean up
 		return () => {
-			socket.off("connect");
-			socket.off("disconnect");
+			socket.off("games");
+			// socket.off("disconnect");
 		};
 	}, []);
 

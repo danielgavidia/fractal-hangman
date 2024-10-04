@@ -21,7 +21,14 @@ app.listen(port, () => {
 // socket
 // setup
 import { Server } from "socket.io";
-import { getInitialGameState, getLobbyGames, move } from "../engine/engine";
+import {
+	getInitialGameState,
+	getLobbyGames,
+	getLobbyGames2,
+	getGame,
+	move,
+	move2,
+} from "../engine/engine";
 import type { GameServer, Difficulty, Game, LobbyGame } from "../engine/engineTypes";
 import prisma from "../prisma/prisma";
 
@@ -36,25 +43,17 @@ export const io = new Server(3001, {
 // logic
 io.on("connection", async (socket) => {
 	console.log("User connected");
-
-	const gameServerPrisma = await prisma.game.findMany({
-		include: {
-			answerWord: true,
-			keyboard: true,
-			hangman: true,
-		},
-	});
-	console.log(gameServerPrisma);
-
-	socket.on("lobby", () => {
-		const lobbyGames = getLobbyGames(gameServer);
+	socket.on("lobby", async () => {
+		const lobbyGames = await getLobbyGames2();
 		console.log(lobbyGames);
 		socket.emit("games", lobbyGames);
 	});
 
-	socket.on("joingame", (gameId: string) => {
+	socket.on("joingame", async (gameId: string) => {
+		// console.log(await getGame(gameId));
 		socket.join(gameId);
-		io.sockets.in(gameId).emit("game", gameServer[gameId]);
+		const game = (await getGame(gameId)) as Game;
+		io.sockets.in(gameId).emit("game", game);
 	});
 
 	socket.on(
@@ -66,11 +65,11 @@ io.on("connection", async (socket) => {
 		}
 	);
 
-	socket.on("move", (gameId: string, letter: string) => {
-		const game = gameServer[gameId];
-		const newGame = move(game, letter);
-		gameServer[gameId] = newGame;
-		io.emit("game", gameServer[gameId]);
+	socket.on("move", async (gameId: string, letter: string) => {
+		const newGame = await move2(gameId, letter);
+		const game = (await getGame(gameId)) as Game;
+		// gameServer[gameId] = newGame;
+		io.emit("game", game);
 	});
 
 	socket.on("disconnect", () => {
