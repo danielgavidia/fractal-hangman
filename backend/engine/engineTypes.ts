@@ -1,6 +1,7 @@
 // game engine
 export interface Game {
-	uniqueId: string;
+	gameId: string;
+	gameName: string;
 	gameMode: GameMode;
 	gameLive: boolean;
 	gameWon: boolean;
