@@ -1,5 +1,4 @@
 import express from "express";
-import openaiChatCompletions from "./openai";
 
 // setup
 // #region
@@ -17,19 +16,18 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
 	console.log(`Server running at http://localhost:${port}`);
 });
-
-// routes
-app.post("/word", async (req, res) => {
-	const { difficulty } = req.body;
-	const resOpenai = await openaiChatCompletions(difficulty);
-	res.status(200).json({ resOpenai: resOpenai });
-});
 // #endregion
 
-// --------------------------------
 // socket
 import { Server } from "socket.io";
-import { getInitialGameState } from "./engine/getInitialGameState";
+import { getInitialGameState, move } from "./engine/engine";
+import type { Difficulty, Game } from "./engine/engineTypes";
+
+type GameServer = {
+	[id: string]: Game;
+};
+
+const gameServer: GameServer = {};
 
 export const io = new Server(3001, {
 	cors: {
@@ -37,54 +35,32 @@ export const io = new Server(3001, {
 	},
 });
 
-let game = getInitialGameState();
-
 io.on("connection", (socket) => {
 	console.log("User connected");
-	socket.emit("game", game);
-	socket.on("move", (newGame) => {
-		// Update data
-		let game = newGame;
 
-		// Broadcast to everyone except the sender
-		socket.broadcast.emit("game", game);
+	socket.on("lobby", () => {
+		socket.emit("games", Object.keys(gameServer));
+	});
 
-		// Emit to all clients including the sender
-		io.emit("game", game);
+	socket.on("joingame", (gameId: string) => {
+		socket.join(gameId); // they're joining the room for this gameId
+		io.sockets.in(gameId).emit("game", gameServer[gameId]);
+	});
+
+	socket.on("creategame", (gameId: string, difficulty: Difficulty) => {
+		// todo just give all the games unique ids and then give them game names as well, and handle rendering of this on the client
+		gameServer[gameId] = getInitialGameState(gameId, difficulty);
+		io.emit("games", Object.keys(gameServer));
+	});
+
+	socket.on("move", (gameId: string, letter: string) => {
+		const game = gameServer[gameId];
+		const newGame = move(game, letter);
+		gameServer[gameId] = newGame;
+		io.emit("game", gameServer[gameId]);
 	});
 
 	socket.on("disconnect", () => {
 		console.log("user disconnected");
 	});
 });
-
-// // socket test
-// import { Server } from "socket.io";
-// const io = new Server(3001, {
-// 	cors: {
-// 		origin: "*",
-// 	},
-// });
-
-// const data = {
-// 	messages: ["Seed message 1", "Seed message 2"],
-// };
-
-// io.on("connection", (socket) => {
-// 	console.log("User connected");
-// 	socket.emit("initial data", data.messages);
-// 	socket.on("chat messages", (msgs) => {
-// 		// Update data
-// 		data.messages = msgs;
-
-// 		// Broadcast to everyone except the sender
-// 		socket.broadcast.emit("messages", data.messages);
-
-// 		// Emit to all clients including the sender
-// 		io.emit("messages", data.messages);
-// 	});
-
-// 	socket.on("disconnect", () => {
-// 		console.log("user disconnected");
-// 	});
-// });

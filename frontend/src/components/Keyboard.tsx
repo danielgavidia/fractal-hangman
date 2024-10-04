@@ -3,11 +3,13 @@ import type { Keyboard } from "../../../backend/engine/engineTypes";
 
 interface KeyboardProps {
     keyboard: Keyboard;
-    move: (letter: string) => void;
+    gameId: string;
+    move: (gameId: string, letter: string) => void;
 }
 
 const Keyboard: React.FC<KeyboardProps> = ({
     keyboard,
+    gameId,
     move,
 }) => {
     return (
@@ -16,6 +18,7 @@ const Keyboard: React.FC<KeyboardProps> = ({
                 return (
                     <KeyboardButton
                         key={index}
+                        gameId={gameId}
                         keyboardLetterObj={x}
                         move={move}
                     />
