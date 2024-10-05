@@ -13,6 +13,8 @@ const PORT = process.env.PORT || 4000;
 // frontend URL from environment variable or use localhost for development
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
+let gameServer = {};
+
 // set up socket
 const io = new Server(Number(PORT), {
 	cors: {
@@ -50,22 +52,7 @@ const updateGameServer = async (gameServer: GameServer) => {
 	try {
 		const stringifiedServer: string = JSON.stringify(gameServer);
 		const existingServer = await getGameServer();
-		if (!existingServer.games) {
-			await prisma.gameServer.create({
-				data: {
-					games: stringifiedServer,
-				},
-			});
-		} else {
-			await prisma.gameServer.update({
-				where: {
-					id: existingServer.id,
-				},
-				data: {
-					games: stringifiedServer,
-				},
-			});
-		}
+		// if you only need one of something ever in the history of your program, then don't store it!!
 	} catch (error) {
 		console.error("Error updating game server:", error);
 	}
@@ -153,3 +140,5 @@ process.on("beforeExit", async () => {
 
 console.log(`Server running on port ${PORT}`);
 console.log(`Accepting connections from: ${FRONTEND_URL}`);
+
+// write a cron job that saves the entire game state and all the games to the database every once in a while.

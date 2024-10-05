@@ -22,7 +22,8 @@ const RouteHome = () => {
 	// load data via websockets
 	useEffect(() => {
 		console.log("we are in the lobby");
-		socket.emit("lobby");
+		// this useeffect is getting called a bunch.
+		socket.emit("lobby"); // not emitting anything that would let me identify WHICH lobby, and I keep making new lobbies.
 		// load initial game state
 		socket.on("games", (games: LobbyGame[]) => {
 			console.log(games);
