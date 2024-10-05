@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 4000;
 
 // frontend URL from environment variable or use localhost for development
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 // set up socket
 const io = new Server(Number(PORT), {
