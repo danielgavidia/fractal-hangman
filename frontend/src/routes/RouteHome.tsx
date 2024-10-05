@@ -19,10 +19,9 @@ const RouteHome = () => {
 	const modes: Difficulty[] = ["easy", "medium", "hard"];
 	const navigate = useNavigate();
 
-	console.log("difficulty", difficulty);
-
 	// load data via websockets
 	useEffect(() => {
+		console.log("we are in the lobby");
 		socket.emit("lobby");
 		// load initial game state
 		socket.on("games", (games: LobbyGame[]) => {

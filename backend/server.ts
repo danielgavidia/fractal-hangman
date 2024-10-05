@@ -1,132 +1,155 @@
-// express setup
-import express from "express";
-export const app = express();
-const port = 3000;
-const cors = require("cors");
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (req, res) => {
-	res.send("Hello World!");
-});
-
-app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}`);
-});
-
-// socket
+// imports
 import { Server } from "socket.io";
 import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
-import prisma from "./prisma/prisma";
 import type { Game, GameServer, Difficulty, LobbyGame } from "./engine/engineTypes";
 
-export const io = new Server(3001, {
+// prisma
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+// port
+const PORT = process.env.PORT || 4000;
+
+// frontend URL from environment variable or use localhost for development
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+// set up socket
+const io = new Server(Number(PORT), {
 	cors: {
-		origin: "*",
+		origin: FRONTEND_URL,
+		methods: ["GET", "POST"],
 	},
 });
 
 // get prisma game server
 const getGameServer = async () => {
-	const res = await prisma.gameServer.findFirst({});
-	if (res && typeof res.games === "string") {
-		const resObj = JSON.parse(res.games);
-		return resObj;
-	} else {
+	try {
+		const res = await prisma.gameServer.findUnique({
+			where: {
+				id: "d1f9edae-f973-479f-87e2-372f06a03805",
+			},
+		});
+		if (res && typeof res.games === "string") {
+			// const resObj = JSON.parse(res.games);
+			// return resObj;
+			return {
+				id: res.id,
+				games: JSON.parse(res.games),
+			};
+		} else {
+			return {};
+		}
+	} catch (error) {
+		console.error("Error fetching game server:", error);
 		return {};
 	}
 };
 
-// socket
-io.on("connection", async (socket) => {
-	console.log("User connected");
-	const gameServer: GameServer = await getGameServer();
-
-	// game lobby
-	socket.on("lobby", () => {
-		const lobbyGames: LobbyGame[] = getLobbyGames(gameServer);
-		socket.emit("games", lobbyGames);
-	});
-
-	// join game
-	socket.on("joingame", (gameId: string) => {
-		console.log(`joingame, gameId: ${gameId}`);
-		socket.join(gameId);
-		io.sockets.in(gameId).emit("game", gameServer[gameId]);
-	});
-
-	// create game
-	socket.on(
-		"creategame",
-		async (gameId: string, dateCreated: Date, gameName: string, difficulty: Difficulty) => {
-			gameServer[gameId] = getInitialGameState(gameId, dateCreated, gameName, difficulty);
-			console.log(gameServer);
-
-			// stringify new server
-			const newGameServer: string = JSON.stringify(gameServer);
-
-			// send to prisma
-			const resServer = await prisma.gameServer.findFirst({}); // get resServerId (there is only one)
-			if (!resServer) {
-				console.log("No game server found, creating one");
-				const newResServer = await prisma.gameServer.create({
-					data: {
-						games: newGameServer,
-					},
-				});
-				console.log("New GameServer created with ID:", newResServer.id);
-			} else {
-				// Update the existing GameServer with the new game state
-				const resServerId = resServer.id;
-				await prisma.gameServer.update({
-					where: {
-						id: resServerId,
-					},
-					data: {
-						games: newGameServer,
-					},
-				});
-			}
-			// get lobby games
-			const lobbyGames: LobbyGame[] = getLobbyGames(gameServer);
-			io.emit("games", lobbyGames);
-		}
-	);
-
-	// move
-	socket.on("move", async (gameId: string, letter: string) => {
-		const game: Game = gameServer[gameId];
-		const newGame: Game = move(game, letter);
-		gameServer[gameId] = newGame;
-		const newGameServer: string = JSON.stringify(gameServer);
-
-		// send to prisma
-		const resServer = await prisma.gameServer.findFirst({}); // get resServerId (there is only one)
-		if (!resServer) {
-			console.log("No game server found, creating one");
-			const newResServer = await prisma.gameServer.create({
+// update game server in DB
+const updateGameServer = async (gameServer: GameServer) => {
+	try {
+		const stringifiedServer: string = JSON.stringify(gameServer);
+		const existingServer = await getGameServer();
+		if (!existingServer.games) {
+			await prisma.gameServer.create({
 				data: {
-					games: newGameServer,
+					games: stringifiedServer,
 				},
 			});
-			console.log("New GameServer created with ID:", newResServer.id);
 		} else {
-			// Update the existing GameServer with the new game state
-			const resServerId = resServer.id;
 			await prisma.gameServer.update({
 				where: {
-					id: resServerId,
+					id: existingServer.id,
 				},
 				data: {
-					games: newGameServer,
+					games: stringifiedServer,
 				},
 			});
 		}
-		io.emit("game", gameServer[gameId]);
-	});
+	} catch (error) {
+		console.error("Error updating game server:", error);
+	}
+};
 
-	socket.on("disconnect", () => {
-		console.log("user disconnected");
-	});
+// initialize server
+const initializeServer = async () => {
+	try {
+		// Connect to database once at startup
+		await prisma.$connect();
+		let gameServerObj = await getGameServer();
+		let gameServer = gameServerObj.games;
+		// console.log(gameServer);
+
+		// Connection
+		io.on("connection", async (socket) => {
+			console.log("User connected from:", socket.handshake.headers.origin);
+
+			// game lobby
+			socket.on("lobby", async () => {
+				const lobbyGames: LobbyGame[] = getLobbyGames(gameServer);
+				await updateGameServer(gameServer);
+				socket.emit("games", lobbyGames);
+			});
+
+			// join game
+			socket.on("joingame", async (gameId: string) => {
+				console.log(`joingame, gameId: ${gameId}`);
+				socket.join(gameId);
+				io.sockets.in(gameId).emit("game", gameServer[gameId]);
+			});
+
+			// create game
+			socket.on(
+				"creategame",
+				async (
+					gameId: string,
+					dateCreated: Date,
+					gameName: string,
+					difficulty: Difficulty
+				) => {
+					gameServer[gameId] = getInitialGameState(
+						gameId,
+						dateCreated,
+						gameName,
+						difficulty
+					);
+					await updateGameServer(gameServer);
+					const lobbyGames: LobbyGame[] = getLobbyGames(gameServer);
+					io.emit("games", lobbyGames);
+				}
+			);
+
+			// move
+			socket.on("move", async (gameId: string, letter: string) => {
+				const game: Game = gameServer[gameId];
+				const newGame: Game = move(game, letter);
+				gameServer[gameId] = newGame;
+				io.emit("game", gameServer[gameId]);
+			});
+
+			// disconnect
+			socket.on("disconnect", async () => {
+				await updateGameServer(gameServer);
+				console.log("user disconnected");
+			});
+		});
+	} catch (error) {
+		console.error("Failed to initialize server:", error);
+		process.exit(1);
+	}
+};
+
+// Start the server
+initializeServer().catch((error) => {
+	console.error("Failed to start server:", error);
+	process.exit(1);
 });
+
+// Handle shutdown gracefully
+process.on("beforeExit", async () => {
+	await prisma.$disconnect();
+	process.exit(1);
+});
+
+console.log(`Server running on port ${PORT}`);
+console.log(`Accepting connections from: ${FRONTEND_URL}`);
