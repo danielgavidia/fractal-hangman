@@ -5,7 +5,7 @@ import type { GameServer, Difficulty, Game, LobbyGame } from "./engine/engineTyp
 const port = Number(process.env.PORT) || 3000;
 const io = new Server(port, {
 	cors: {
-		origin: ["http://localhost:5173", "https://fractal-hangman.com"],
+		origin: ["http://141.136.42.247:5173", "https://fractal-hangman.com"],
 		methods: ["GET", "POST"],
 	},
 });
