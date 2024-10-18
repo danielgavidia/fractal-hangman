@@ -2,21 +2,14 @@ import { Server } from "socket.io";
 import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
 import type { GameServer, Difficulty, Game, LobbyGame } from "./engine/engineTypes";
 
-const express = require("express");
-const http = require("http");
-const cors = require("cors");
-
-const app = express();
-const server = http.createServer(app);
-
-const io = new Server(server, {
+const port = Number(process.env.PORT) || 3000;
+const io = new Server(port, {
 	cors: {
 		origin: ["http://localhost:5173", "https://fractal-hangman.com"],
 		methods: ["GET", "POST"],
 	},
 });
 
-const port = Number(process.env.PORT) || 3000;
 const gameServer: GameServer = {};
 
 console.log("Server running on port ", port);
