@@ -17,6 +17,7 @@ services:
     buildCommand: |
       bun install 
       bun run build
+    startCommand: bun run preview
     plan: free
     envVars:
       - key: VITE_BASE_URL
