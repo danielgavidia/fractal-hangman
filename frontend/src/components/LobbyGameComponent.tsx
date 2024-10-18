@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 
 // Types
-=======
->>>>>>> main
 import type { LobbyGame } from "../../../backend/engine/engineTypes";
 
 // Components
@@ -54,20 +51,6 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 		second: "2-digit",
 		hour12: false,
 	};
-<<<<<<< HEAD
-=======
-
-	const [copied, setCopied] = useState<boolean>(false);
-	const navigate = useNavigate();
-	const copyToClipboard = (link: string) => {
-		navigator.clipboard.writeText(link).then(() => {
-			setCopied(true);
-			setTimeout(() => setCopied(false), 2000);
-		});
-	};
-	const link = `${import.meta.env.VITE_BASE_URL}/game/${gameId}`;
-
->>>>>>> main
 	const date = new Date(dateCreated).toLocaleDateString("en-US", options);
 
 	return (
@@ -76,7 +59,6 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 			<div>
 				<p className="text-sm p-1">{gameName}</p>
 				<p className="text-[10px] text-base-300 p-1"> {date}</p>
-<<<<<<< HEAD
 			</div>
 
 			{/* Difficulty */}
@@ -113,34 +95,6 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 				>
 					{copied ? "Copied!" : "link"}
 				</button>
-=======
-				<div className="flex justify-between items-center h-12">
-					<p className="text-[10px] w-10 p-1"> {difficulty}</p>
-					<GameStatus gameWon={gameWon} gameLive={gameLive} />
-					<div className="text-[10px] flex p-1">
-						<p className="text-primary">{String(guessedCorrectly).padStart(2, "0")}</p>
-						<p>&nbsp;/&nbsp;</p>
-						<p>{String(answerWordLength).padStart(2, "0")}</p>
-					</div>
-					<GameProgress wrongCount={wrongCount} />
-					<div className="w-20 h-full p-1 text-xs">
-						<button
-							onClick={() => navigate(`/game/${gameId}`)}
-							className="border-[0.5px] border-neutral h-full w-full hover:bg-primary"
-						>
-							go
-						</button>
-					</div>
-					<div className="w-20 h-full p-1 text-xs">
-						<button
-							onClick={() => copyToClipboard(link)}
-							className="border-[0.5px] border-neutral h-full w-full hover:bg-primary"
-						>
-							{copied ? "Copied!" : "link"}
-						</button>
-					</div>
-				</div>
->>>>>>> main
 			</div>
 		</div>
 	);
