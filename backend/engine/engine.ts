@@ -46,21 +46,21 @@ export const getInitialGameState = (
 
 // get lobbyGame
 export function getLobbyGames(gameServer: GameServer): LobbyGame[] {
-	const games = Object.values(gameServer).map((x) => {
-		const answerWordLength = x.answerWord.length;
-		const guessedCorrectly = x.keyboard.filter((x) => x.correct === true && !x.enabled).length;
-		const game = {
-			gameId: x.gameId,
-			gameName: x.gameName,
-			gameWon: x.gameWon,
-			gameLive: x.gameLive,
-			dateCreated: x.dateCreated,
-			difficulty: x.difficulty,
+	const games = Object.values(gameServer).map((game) => {
+		const answerWordLength = game.answerWord.length;
+		const guessedCorrectly = game.answerWord.filter((item) => item.shown === true).length;
+		const res = {
+			gameId: game.gameId,
+			gameName: game.gameName,
+			gameWon: game.gameWon,
+			gameLive: game.gameLive,
+			dateCreated: game.dateCreated,
+			difficulty: game.difficulty,
 			answerWordLength: answerWordLength,
 			guessedCorrectly: guessedCorrectly,
-			wrongCount: x.wrongCount,
+			wrongCount: game.wrongCount,
 		};
-		return game;
+		return res;
 	});
 	return games;
 }
