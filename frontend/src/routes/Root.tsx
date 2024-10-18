@@ -8,7 +8,7 @@ const Root = () => {
 					<Link to="/home">Fractal Hangman</Link>
 				</div>
 				<div>
-					<Link to="/home">New Game</Link>
+					<Link to="/home">Home</Link>
 				</div>
 			</div>
 			<div className="pt-20 p-2 h-full w-5/6 max-w-screen-sm">
