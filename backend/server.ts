@@ -11,6 +11,8 @@ export const io = new Server(port, {
 	},
 });
 
+console.log("Server running on port ", port);
+
 io.on("connection", (socket) => {
 	console.log("User connected");
 
