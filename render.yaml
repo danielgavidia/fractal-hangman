@@ -24,12 +24,12 @@ services:
         fromService:
           name: frontend
           type: web
-          property: url
+          property: hostport
       - key: VITE_BACKEND_URL
         fromService:
           name: backend
           type: web
-          property: url
+          property: hostport
     rootDir: frontend
     repo: https://github.com/danielgavidia/fractal-hangman
     branch: daniel/deployment
