@@ -1,0 +1,18 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model GameServer {
+    // defaults
+    id        String   @id @default(uuid()) // or cuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // game
+    games Json
+}
