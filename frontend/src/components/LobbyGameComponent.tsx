@@ -41,7 +41,7 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 	};
 
 	// Constants
-	const link = `${window.location.origin}/game/${gameId}`;
+	const link = `http://www.fractal-hangman.com/game/${gameId}`;
 	const options: Intl.DateTimeFormatOptions = {
 		year: "numeric",
 		month: "2-digit",
