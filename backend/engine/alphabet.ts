@@ -1,4 +1,4 @@
-import type { Letter } from "../engine/engineTypes";
+import type { Letter } from "../../types/engineTypes";
 
 export const alphabet: Letter[] = [
 	"a",
