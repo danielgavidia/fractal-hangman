@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Types
-import type { LobbyGame } from "../../../backend/engine/engineTypes";
+import type { LobbyGame } from "../../../types/engineTypes";
 
 // Components
 import GameStatus from "./GameStatus";
