@@ -1,4 +1,4 @@
-import type { AnswerWord, AnswerLetterObj } from "../../../types/engineTypes";
+import type { AnswerWord, AnswerLetterObj } from "../../types/engineTypes";
 
 interface AnswerWordProps {
 	answerWord: AnswerWord;

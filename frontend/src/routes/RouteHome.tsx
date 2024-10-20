@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { socket } from "../utils/socket";
 
 // types
-import type { Difficulty } from "../../../types/engineTypes";
-import type { LobbyGame } from "../../../types/engineTypes";
+import type { Difficulty } from "../../types/engineTypes";
+import type { LobbyGame } from "../../types/engineTypes";
 
 // components
 import LobbyGameComponent from "../components/LobbyGameComponent";

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { Game } from "../../../types/engineTypes";
+import type { Game } from "../../types/engineTypes";
 
 interface GameOverModal {
 	game: Game;

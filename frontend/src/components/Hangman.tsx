@@ -1,4 +1,4 @@
-import type { Game } from "../../../types/engineTypes";
+import type { Game } from "../../types/engineTypes";
 
 interface HangmanProps {
 	game: Game;

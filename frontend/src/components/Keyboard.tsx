@@ -1,5 +1,5 @@
 import KeyboardButton from "./KeyboardButton";
-import type { Keyboard } from "../../../types/engineTypes";
+import type { Keyboard } from "../../types/engineTypes";
 
 interface KeyboardProps {
 	keyboard: Keyboard;

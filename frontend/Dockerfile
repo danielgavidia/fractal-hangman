@@ -4,14 +4,15 @@ FROM oven/bun:latest AS builder
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and bun.lockb for bun dependencies
-COPY package.json bun.lockb ./
+# Copy package.json and bun.lockb for bun dependencies, and also types for type references
+COPY ./frontend/package.json ./frontend/bun.lockb ./
+COPY ./types /app/types
 
 # Install dependencies using bun
 RUN bun install
 
 # Copy the rest of the application code
-COPY . .
+COPY ./frontend .
 
 # Build the Vite app
 RUN bun run build
