@@ -1,0 +1,25 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    environment:
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+      - VITE_BASE_URL=${VITE_BASE_URL}
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    env_file:
+      - .env
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - FRONTEND_URL=${FRONTEND_URL}
+    env_file:
+      - .env

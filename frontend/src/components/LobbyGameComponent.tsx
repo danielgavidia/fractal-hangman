@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Types
-import type { LobbyGame } from "../../../backend/engine/engineTypes";
+import type { LobbyGame } from "../../types/engineTypes";
 
 // Components
 import GameStatus from "./GameStatus";
@@ -41,7 +41,7 @@ const LobbyGameComponent: React.FC<LobbyGameComponentProps> = ({ lobbyGame }) =>
 	};
 
 	// Constants
-	const link = `http://www.fractal-hangman.com/game/${gameId}`;
+	const link = `${import.meta.env.VITE_BASE_URL}/game/${gameId}`;
 	const options: Intl.DateTimeFormatOptions = {
 		year: "numeric",
 		month: "2-digit",

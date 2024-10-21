@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { socket } from "../utils/socket";
 
 // types
-import type { Difficulty } from "../../../backend/engine/engineTypes";
-import type { LobbyGame } from "../../../backend/engine/engineTypes";
+import type { Difficulty } from "../../types/engineTypes";
+import type { LobbyGame } from "../../types/engineTypes";
 
 // components
 import LobbyGameComponent from "../components/LobbyGameComponent";
@@ -66,14 +66,12 @@ const RouteHome = () => {
 						></input>
 						<div className="flex justify-between space-x-6 pb-4">
 							{modes.map((x, index) => {
-								const styling =
-									x === difficulty ? "bg-primary" : "bg-neutral-content";
+								const styling = x === difficulty ? "bg-primary" : "bg-neutral-content";
 								return (
 									<button
 										key={index}
 										className={
-											"border-[0.5px] border-neutral p-2 w-full hover:bg-primary " +
-											styling
+											"border-[0.5px] border-neutral p-2 w-full hover:bg-primary " + styling
 										}
 										onClick={() => setDifficulty(x)}
 									>
@@ -89,9 +87,7 @@ const RouteHome = () => {
 							Play
 						</button>
 						{error && (
-							<p className="text-error w-full text-center p-4">
-								Game name can't be blank!
-							</p>
+							<p className="text-error w-full text-center p-4">Game name can't be blank!</p>
 						)}
 					</div>
 					<p className="w-full text-center p-4 font-bold text-lg">Current Games</p>

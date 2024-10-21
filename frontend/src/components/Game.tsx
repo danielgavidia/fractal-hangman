@@ -7,7 +7,7 @@ import AnswerWord from "./AnswerWord";
 import Hangman from "./Hangman";
 
 // types
-import type { Game } from "../../../backend/engine/engineTypes";
+import type { Game } from "../../types/engineTypes";
 
 // utils
 import GameOverModal from "./GameOverModal";

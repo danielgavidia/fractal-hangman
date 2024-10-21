@@ -1,4 +1,4 @@
-import type { KeyboardLetterObj } from "../../../backend/engine/engineTypes";
+import type { KeyboardLetterObj } from "../../types/engineTypes";
 
 interface KeyboardButtonProps {
 	gameId: string;

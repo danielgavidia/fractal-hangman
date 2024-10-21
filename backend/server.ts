@@ -1,15 +1,11 @@
 import { Server } from "socket.io";
 import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
-import type { GameServer, Difficulty, Game, LobbyGame } from "./engine/engineTypes";
+import type { GameServer, Difficulty, Game, LobbyGame } from "./types/engineTypes";
 
 const port = Number(process.env.PORT) || 3000;
 const io = new Server(port, {
 	cors: {
-		origin: [
-			"http://141.136.42.247:5173",
-			"http://fractal-hangman.com",
-			"http://www.fractal-hangman.com",
-		],
+		origin: [`${process.env.FRONTEND_URL}`],
 		methods: ["GET", "POST"],
 	},
 });

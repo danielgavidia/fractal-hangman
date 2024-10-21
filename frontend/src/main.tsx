@@ -10,28 +10,28 @@ import RouteHome from "./routes/RouteHome.tsx";
 import RouteGame from "./routes/RouteGame.tsx";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Root />,
-        children: [
-            {
-                path: "/",
-                element: <RouteHome />,
-            },
-            {
-                path: "/home",
-                element: <RouteHome />,
-            },
-            {
-                path: "/game/:id",
-                element: <RouteGame />,
-            },
-        ],
-    },
+	{
+		path: "/",
+		element: <Root />,
+		children: [
+			{
+				path: "/",
+				element: <RouteHome />,
+			},
+			{
+				path: "/home",
+				element: <RouteHome />,
+			},
+			{
+				path: "/game/:id",
+				element: <RouteGame />,
+			},
+		],
+	},
 ]);
 
 createRoot(document.getElementById("root")!).render(
-    // <StrictMode>
-    <RouterProvider router={router} />
-    // </StrictMode>,
+	// <StrictMode>
+	<RouterProvider router={router} />
+	// </StrictMode>,
 );
