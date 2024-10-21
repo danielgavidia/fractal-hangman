@@ -1,9 +1,13 @@
 import { io, Socket } from "socket.io-client";
 
-// Determine the correct protocol and URL based on the environment
-const port = window.location.hostname === "localhost" ? 3000 : 3000;
+// Determine the correct WebSocket protocol and URL
 const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+const port = window.location.hostname === "localhost" ? 3000 : ""; // Leave port blank for production
 
-export const socket: Socket = io(`${protocol}://${window.location.hostname}:${port}`);
+// Construct the WebSocket URL without port in production
+const socketUrl = port
+	? `${protocol}://${window.location.hostname}:${port}`
+	: `${protocol}://${window.location.hostname}`;
 
-// export const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
+// Initialize the socket connection
+export const socket: Socket = io(socketUrl);
