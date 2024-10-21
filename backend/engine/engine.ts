@@ -14,7 +14,7 @@ import type {
 	Difficulty,
 	LobbyGame,
 	GameServer,
-} from "../../types/engineTypes";
+} from "../types/engineTypes";
 
 // get initial game state
 export const getInitialGameState = (

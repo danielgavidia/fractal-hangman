@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copy package.json and bun.lockb for bun dependencies, and also types for type references
 COPY ./frontend/package.json ./frontend/bun.lockb ./
-COPY ./types /app/types
 
 # Install dependencies using bun
 RUN bun install

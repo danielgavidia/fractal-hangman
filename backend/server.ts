@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { getInitialGameState, getLobbyGames, move } from "./engine/engine";
-import type { GameServer, Difficulty, Game, LobbyGame } from "../types/engineTypes";
+import type { GameServer, Difficulty, Game, LobbyGame } from "./types/engineTypes";
 
 const port = Number(process.env.PORT) || 3000;
 const io = new Server(port, {
