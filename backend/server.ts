@@ -5,7 +5,7 @@ import type { GameServer, Difficulty, Game, LobbyGame } from "./types/engineType
 const port = Number(process.env.PORT) || 3000;
 const io = new Server(port, {
 	cors: {
-		origin: ["http://localhost:5173"],
+		origin: [`${process.env.FRONTEND_URL}`],
 		methods: ["GET", "POST"],
 	},
 });
