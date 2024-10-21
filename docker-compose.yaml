@@ -1,10 +1,15 @@
 services:
-  # frontend:
-  #   build:
-  #     context: .
-  #     dockerfile: ./frontend/Dockerfile
-  #   ports:
-  #     - "5173:80"
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    environment:
+      - VITE_BACKEND_URL=http://backend:3000
+      - VITE_BASE_URL=http://frontend:5173
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
   backend:
     build:
       context: .
